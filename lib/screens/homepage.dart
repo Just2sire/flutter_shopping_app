@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shopping_app/global_variables.dart';
+import 'package:shopping_app/screens/cart_page.dart';
+import 'package:shopping_app/screens/product_list.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -9,128 +10,45 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<String> filterBy = const [
-    "All",
-    "Adidas",
-    "Nike",
-    "Puma",
-    "Reebok",
-    "Gillette",
-    "Tommy Hilfiger"
-  ];
-  late String selectedFilter;
+  int currentIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    selectedFilter = filterBy.first;
   }
+
+  List<Widget> pages = const [
+    ProductList(),
+    CartPage(),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    const OutlineInputBorder border = OutlineInputBorder(
-      borderSide: BorderSide(
-        color: Color.fromRGBO(225, 225, 225, 1),
-      ),
-      borderRadius: BorderRadius.horizontal(
-        left: Radius.circular(50),
-      ),
-    );
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            const Row(
-              children: [
-                Padding(
-                  padding: EdgeInsets.all(20.0),
-                  child: Text(
-                    "Shoes\nCollection",
-                    style: TextStyle(
-                      fontSize: 35,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: "Search",
-                      prefixIcon: Icon(Icons.search),
-                      border: border,
-                      focusedBorder: border,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 60,
-              width: double.infinity,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: filterBy.length,
-                itemBuilder: (context, index) {
-                  final filter = filterBy[index];
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          selectedFilter = filter;
-                        });
-                      },
-                      child: Chip(
-                        backgroundColor: selectedFilter == filter
-                            ? Theme.of(context).colorScheme.primary
-                            : const Color.fromRGBO(245, 247, 249, 1),
-                        side: const BorderSide(
-                          color: Color.fromRGBO(245, 247, 249, 1),
-                        ),
-                        label: Text(filter),
-                        labelStyle: const TextStyle(fontSize: 16),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 15,
-                        ),
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(30),
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-            Expanded(
-              child: SizedBox(
-                width: double.infinity,
-                child: ListView.builder(
-                  itemCount: products.length,
-                  itemBuilder: (context, index) {
-                    if (products[index]
-                        case {
-                          'title': String title,
-                          'price': double price,
-                          'imageUrl': String imageUrl
-                        }) {
-                      return ProductCard(
-                        title: title,
-                        price: price,
-                        imageUrl: imageUrl,
-                        backgroundColor: index.isOdd ? const Color.fromRGBO(225, 225, 225, 1) : const Color.fromRGBO(216, 240, 253, 1),
-                      );
-                    } else {
-                      return throw "Data types incorrect";
-                    }
-                  },
-                ),
-              ),
-            )
-          ],
-        ),
+      body: IndexedStack(
+        index: currentIndex,
+        children: pages,
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: currentIndex,
+        iconSize: 35,
+        selectedFontSize: 0,
+        unselectedFontSize: 0,
+        onTap: (value) {
+          setState(() {
+            currentIndex = value;
+          });
+        },
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: "Home",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_cart),
+            label: "Cart",
+          ),
+        ],
       ),
     );
   }
@@ -158,9 +76,9 @@ class ProductCard extends StatelessWidget {
       ),
       padding: const EdgeInsets.all(16),
       width: double.infinity,
-      height: 250,
+      height: 260,
       decoration: BoxDecoration(
-        color:  backgroundColor,
+        color: backgroundColor,
         borderRadius: const BorderRadius.all(Radius.circular(20)),
       ),
       child: Column(
