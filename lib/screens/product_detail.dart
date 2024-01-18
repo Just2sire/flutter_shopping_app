@@ -11,28 +11,34 @@ class ProductDetail extends StatefulWidget {
 }
 
 class _ProductDetailState extends State<ProductDetail> {
-  late int selectedSize;
+  int selectedSize = 0;
 
   @override
   void initState() {
     super.initState();
-    selectedSize = (widget.product["sizes"] as List<int>).first;
+    // selectedSize = (widget.product["sizes"] as List<int>).first;
   }
 
   void addToCart() {
-    context.read<CartProvider>().addProduct({
-      "id": widget.product["id"],
-      "title": widget.product["title"],
-      "imageUrl": widget.product["imageUrl"],
-      "price": widget.product["price"],
-      "company": widget.product["company"],
-      "size": selectedSize,
-    });
+    String message = "";
+    if (selectedSize != 0) {
+      context.read<CartProvider>().addProduct({
+        "id": widget.product["id"],
+        "title": widget.product["title"],
+        "imageUrl": widget.product["imageUrl"],
+        "price": widget.product["price"],
+        "company": widget.product["company"],
+        "size": selectedSize,
+      });
+      message = "Ajouté au panier";
+    } else {
+      message = "Please select a size";
+    }
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        duration: Duration(seconds: 3),
-        content: Text("Ajouté au panier"),
+      SnackBar(
+        duration: const Duration(seconds: 3),
+        content: Text(message),
       ),
     );
   }

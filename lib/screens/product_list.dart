@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:shopping_app/global_variables.dart';
+import 'package:shopping_app/constants/global_variables.dart';
 import 'package:shopping_app/screens/homepage.dart';
 import 'package:shopping_app/screens/product_detail.dart';
+
+import '../widgets/product_card.dart';
 
 
 class ProductList extends StatefulWidget {
