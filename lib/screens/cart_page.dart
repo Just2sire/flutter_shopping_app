@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shopping_app/global_variables.dart';
+import 'package:provider/provider.dart';
+// import 'package:shopping_app/global_variables.dart';
+import 'package:shopping_app/providers/cart_provider.dart';
 
 class CartPage extends StatelessWidget {
   const CartPage({super.key});
@@ -16,15 +18,18 @@ class CartPage extends StatelessWidget {
       ),
       body: SizedBox(
         child: ListView.builder(
-          itemCount: cart.length,
+          // itemCount: cart.length,
+          itemCount: context.watch<CartProvider>().cart.length,
           itemBuilder: (context, index) {
-            final cartItem = cart[index];
+            final cartItem = context.watch<CartProvider>().cart[index];
+            debugPrint(context.watch<CartProvider>().cart.length.toString());
             if (cartItem
                 case {
+                  'id': String id,
                   'title': String title,
-                  'price': double price,
+                  // 'price': double price,
                   'imageUrl': String imageUrl,
-                  'company': String company,
+                  // 'company': String company,
                   'size': int size,
                 }) {
               return ListTile(
@@ -40,7 +45,9 @@ class CartPage extends StatelessWidget {
                   ),
                 ),
                 trailing: IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    context.read<CartProvider>().removeProduct(id);
+                  },
                   icon: const Icon(
                     Icons.delete,
                     color: Colors.red,

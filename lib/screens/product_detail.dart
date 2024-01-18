@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shopping_app/providers/cart_provider.dart';
 
 class ProductDetail extends StatefulWidget {
   final Map<String, Object> product;
@@ -17,6 +19,24 @@ class _ProductDetailState extends State<ProductDetail> {
     selectedSize = (widget.product["sizes"] as List<int>).first;
   }
 
+  void addToCart() {
+    context.read<CartProvider>().addProduct({
+      "id": widget.product["id"],
+      "title": widget.product["title"],
+      "imageUrl": widget.product["imageUrl"],
+      "price": widget.product["price"],
+      "company": widget.product["company"],
+      "size": selectedSize,
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        duration: Duration(seconds: 3),
+        content: Text("Ajouté au panier"),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,6 +52,7 @@ class _ProductDetailState extends State<ProductDetail> {
           ),
         ),
       ),
+      extendBody: true,
       body: Column(
         // mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -98,7 +119,9 @@ class _ProductDetailState extends State<ProductDetail> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 30),
                   child: FilledButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      addToCart();
+                    },
                     style: FilledButton.styleFrom(
                       backgroundColor: Theme.of(context).colorScheme.primary,
                       minimumSize: const Size(double.infinity, 50),
@@ -125,18 +148,6 @@ class _ProductDetailState extends State<ProductDetail> {
               ],
             ),
           )
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: "Home",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
-            label: "Cart",
-          ),
         ],
       ),
     );
