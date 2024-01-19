@@ -22,7 +22,7 @@ class ProductCard extends StatelessWidget {
       ),
       padding: const EdgeInsets.all(16),
       width: double.infinity,
-      height: 260,
+      // height: 260,
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: const BorderRadius.all(Radius.circular(20)),

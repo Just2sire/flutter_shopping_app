@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shopping_app/constants/global_variables.dart';
-import 'package:shopping_app/screens/homepage.dart';
+// import 'package:shopping_app/screens/homepage.dart';
 import 'package:shopping_app/screens/product_detail.dart';
 
 import '../widgets/product_card.dart';
-
 
 class ProductList extends StatefulWidget {
   const ProductList({super.key});
@@ -30,8 +29,10 @@ class _ProductListState extends State<ProductList> {
     selectedFilter = filterBy.first;
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     const OutlineInputBorder border = OutlineInputBorder(
       borderSide: BorderSide(
         color: Color.fromRGBO(225, 225, 225, 1),
@@ -41,78 +42,116 @@ class _ProductListState extends State<ProductList> {
       ),
     );
     return SafeArea(
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Text(
-                    "Shoes\nCollection",
-                    style: Theme.of(context).textTheme.titleLarge,
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Text(
+                  "Shoes\nCollection",
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+              ),
+              const Expanded(
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: "Search",
+                    prefixIcon: Icon(Icons.search),
+                    border: border,
+                    focusedBorder: border,
                   ),
                 ),
-                const Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: "Search",
-                      prefixIcon: Icon(Icons.search),
-                      border: border,
-                      focusedBorder: border,
-                    ),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 60,
+            width: double.infinity,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: filterBy.length,
+              itemBuilder: (context, index) {
+                final filter = filterBy[index];
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8.0,
                   ),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 60,
-              width: double.infinity,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: filterBy.length,
-                itemBuilder: (context, index) {
-                  final filter = filterBy[index];
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8.0,
-                    ),
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          selectedFilter = filter;
-                        });
-                      },
-                      child: Chip(
-                        backgroundColor: selectedFilter == filter
-                            ? Theme.of(context).colorScheme.primary
-                            : const Color.fromRGBO(245, 247, 249, 1),
-                        side: const BorderSide(
-                          color: Color.fromRGBO(245, 247, 249, 1),
-                        ),
-                        label: Text(filter),
-                        labelStyle: const TextStyle(fontSize: 16),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 15,
-                        ),
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(30),
-                          ),
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedFilter = filter;
+                      });
+                    },
+                    child: Chip(
+                      backgroundColor: selectedFilter == filter
+                          ? Theme.of(context).colorScheme.primary
+                          : const Color.fromRGBO(245, 247, 249, 1),
+                      side: const BorderSide(
+                        color: Color.fromRGBO(245, 247, 249, 1),
+                      ),
+                      label: Text(filter),
+                      labelStyle: const TextStyle(fontSize: 16),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 15,
+                      ),
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(30),
                         ),
                       ),
                     ),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             ),
-            const SizedBox(
-              height: 20,
-            ),
-            Expanded(
-              child: SizedBox(
-                width: double.infinity,
-                child: ListView.builder(
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Expanded(
+            child: LayoutBuilder(builder: (context, constrins) {
+              if (constrins.maxWidth > 1080) {
+                return GridView.builder(
+                  itemCount: products.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 1.8,
+                  ),
+                  itemBuilder: ((context, index) {
+                    if (products[index]
+                        case {
+                          'title': String title,
+                          'price': double price,
+                          'imageUrl': String imageUrl
+                        }) {
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => ProductDetail(
+                                product: products[index],
+                              ),
+                            ),
+                          );
+                        },
+                        child: ProductCard(
+                          title: title,
+                          price: price,
+                          imageUrl: imageUrl,
+                          backgroundColor: index.isOdd
+                              ? const Color.fromRGBO(225, 225, 225, 1)
+                              : const Color.fromRGBO(216, 240, 253, 1),
+                        ),
+                      );
+                    } else {
+                      return throw "Data types incorrect";
+                    }
+                  }),
+                );
+              } else {
+                return ListView.builder(
                   itemCount: products.length,
                   itemBuilder: (context, index) {
                     if (products[index]
@@ -144,11 +183,19 @@ class _ProductListState extends State<ProductList> {
                       return throw "Data types incorrect";
                     }
                   },
-                ),
-              ),
-            )
-          ],
-        ),
-      );
+                );
+              }
+            }),
+          ),
+          // Expanded(
+          //   child: SizedBox(
+          //     width: double.infinity,
+          //     child:
+          //         :
+          //   ),
+          // ),
+        ],
+      ),
+    );
   }
 }

@@ -45,6 +45,7 @@ class _ProductDetailState extends State<ProductDetail> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         title: const Text("Product Detail"),
@@ -74,6 +75,7 @@ class _ProductDetailState extends State<ProductDetail> {
               tag: widget.product['title'].toString(),
               child: Image.asset(
                 widget.product['imageUrl'] as String,
+                height: 250,
               ),
             ),
           ),
@@ -130,7 +132,7 @@ class _ProductDetailState extends State<ProductDetail> {
                     },
                     style: FilledButton.styleFrom(
                       backgroundColor: Theme.of(context).colorScheme.primary,
-                      minimumSize: const Size(double.infinity, 50),
+                      fixedSize: const Size(350, 50),
                     ),
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
